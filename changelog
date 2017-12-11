@@ -1,3 +1,9 @@
+turnkey-ansible-15.0 (1) turnkey; urgency=low
+
+  * Ansible version 2.4.2
+
+ -- Stefan Davis <stefan@turnkeylinux.org>  Mon, 11 Dec 2017 21:51:10 +1100
+
 turnkey-ansible-14.2 (1) turnkey; urgency=low
 
   * Ansible version 2.3.1
