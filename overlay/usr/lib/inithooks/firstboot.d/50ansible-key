@@ -9,5 +9,10 @@ APP_USER=ansible
 [ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
 
 # make sure the .ssh directory exists
-mkdir -p /root/.ssh
-cat /home/$APP_USER/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+if [[ $SUDOADMIN == "true" ]]; then
+    ADMIN_HOME=/home/admin
+else
+    ADMIN_HOME=/root
+fi
+mkdir -p $ADMIN_HOME/.ssh
+cat /home/$APP_USER/.ssh/id_rsa.pub >> $ADMIN_HOME/.ssh/authorized_keys

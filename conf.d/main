@@ -22,6 +22,9 @@ addgroup --system admins
 adduser --disabled-login --gecos 'ansible user' $ANSIBLE_USER
 echo $ANSIBLE_USER:$ANSIBLE_PASS | chpasswd
 
+# remove ansible content from skel directory now that ansible user is created
+rm -r /etc/skel/*
+
 # work around AWS MarketPlace issue:
 # - lock account so no login allowed until password has been set
 passwd -l $ANSIBLE_USER

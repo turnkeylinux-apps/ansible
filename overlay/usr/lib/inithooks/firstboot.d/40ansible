@@ -7,5 +7,5 @@ APP_USER=ansible
 
 [ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
 
-$INITHOOKS_PATH/bin/setpass_key.py $APP_USER --pass="$APP_PASS"
+$INITHOOKS_PATH/bin/ansible.py $APP_USER --pass="$APP_PASS"
 
