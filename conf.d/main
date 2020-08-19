@@ -6,9 +6,8 @@ ADMIN_PASS=turnkey
 HTDOCS=/var/www/ansible/htdocs
 
 # install ansible and deps (inc Windows support)
-easy_install3 pip
 python3 -m pip install --upgrade --force setuptools
-pip3 install 'ansible==2.7.10'
+pip3 install 'ansible==2.9.12'
 pip3 install --upgrade 'pywinrm>=0.1.1'
 pip3 install boto3
 
