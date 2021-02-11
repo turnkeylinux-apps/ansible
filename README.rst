@@ -3,7 +3,7 @@ Ansible® - Radically simple IT automation platform
 
 `Ansible`_ is a simple, agentless IT automation engine that automates
 cloud provisioning, configuration management, application deployment and
-intra-service ochestration. It can configure systems, deploy software,
+intra-service orchestration. It can configure systems, deploy software,
 and streamline advanced IT tasks such as continuous deployments or zero
 downtime rolling updates.
 

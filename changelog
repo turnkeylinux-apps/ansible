@@ -23,7 +23,7 @@ turnkey-ansible-15.1 (1) turnkey; urgency=low
   * Include Debian 'python3-pyfits' package. Not directly required but
     includes a working weakref.py file. The Python3 version in Stretch is
     buggy - see Debian bug #918716. Closes #1324.
-    Issue #1325 tracks the future removal of the unrequired dependency at some
+    Issue #1325 tracks the future removal of the unrequited dependency at some
     point in the future.
 
  -- Jeremy Davis <jeremy@turnkeylinux.org>  Thu, 02 May 2019 14:53:27 +1000
@@ -73,7 +73,7 @@ turnkey-ansible-14.0 (1) turnkey; urgency=low
     - No server or client daemons; uses existing SSHd
     - No additional software required on clients
     - Modules can be written in ANY language
-    - Does not require root privledges
+    - Does not require root privileges
    
   * Special notes about TurnKey Ansible appliance
     - Login as user 'ansible' to run Ansible
