@@ -1,0 +1,17 @@
+#!/bin/bash -ex
+
+dl() {
+    [ "$FAB_HTTP_PROXY" ] && PROXY="--proxy $FAB_HTTP_PROXY"
+    cd $2; curl -L -f -O -J $PROXY $1; cd -
+}
+
+# download semaphore deb
+REPO=ansible-semaphore/semaphore
+VERSION=$(gh_releases $REPO | grep -v '^v.0' | sort -V | tail -1)
+
+URL="https://github.com/$REPO/releases/download/${VERSION}/semaphore_${VERSION#v}_linux_amd64.deb"
+SRC=/usr/local/src
+dl $URL $SRC
+
+URL="https://raw.githubusercontent.com/ansible-semaphore/semaphore/develop/deployment/systemd/semaphore.service"
+dl $URL $SRC
