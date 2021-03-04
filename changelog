@@ -1,3 +1,22 @@
+turnkey-ansible-16.1 (1) turnkey; urgency=low
+
+  * 
+
+  * Update Ansible to latest 2.x upstream version - 2.10.7.
+    (Note v3.0 has been released very recently. However, there is little
+    documentation our appliance will ship with v2.x for this release).
+
+  * Include Anisble-Semaphore - a 3rd party Ansible web UI. Currently
+    installed via upsream deb. Includes latest Semaphore - v2.6.8.
+
+  * Previous TurnKey landing page (aka tklweb-cp) removed (browsing to
+    appliance defaults to Semaphore now).
+
+  * Note: Please refer to turnkey-core's 16.1 changelog for changes common to
+    all appliances. Here we only describe changes specific to this appliance.
+
+ -- Jeremy Davis <jeremy@turnkeylinux.org>  Thu, 04 Mar 2021 18:22:18 +1100
+
 turnkey-ansible-16.0 (1) turnkey; urgency=low
 
   * Update Ansible to latest upstream version - 2.9.12.
