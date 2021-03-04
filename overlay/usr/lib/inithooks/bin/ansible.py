@@ -17,12 +17,16 @@ import subprocess
 from subprocess import PIPE
 import signal
 import pipes
+import bcrypt
 
 from dialog_wrapper import Dialog
+from mysqlconf import MySQL
+
 
 def fatal(s):
     print("Error:", s, file=sys.stderr)
     sys.exit(1)
+
 
 def usage(s=None):
     if s:
@@ -30,6 +34,7 @@ def usage(s=None):
     print("Syntax: %s <username> [options]" % sys.argv[0], file=sys.stderr)
     print(__doc__, file=sys.stderr)
     sys.exit(1)
+
 
 def main():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -53,11 +58,17 @@ def main():
         d = Dialog('TurnKey Linux - First boot configuration')
         password = d.get_password(
             "%s Password" % username.capitalize(),
-            "Please enter new password for the %s account." % username)
-
+            "Please enter new password for the %s user account. This password"
+            " will also be used for the Sempahore 'admin' user." % username)
 
     command = ["chpasswd"]
     input = ":".join([username, password])
+
+    salt = bcrypt.gensalt()
+    hashpass = bcrypt.hashpw(password.encode('utf8'), salt).decode('utf8')
+
+    m = MySQL()
+    m.execute('UPDATE semaphore.user SET password=%s WHERE id=1;', (hashpass,))
 
     p = subprocess.Popen(command, stdin=PIPE, shell=False)
     p.stdin.write(input.encode())
@@ -67,10 +78,12 @@ def main():
         fatal(err)
 
     """use ssh-keygen to create an rsa key pair using the same password"""
-    subprocess.call(['su', username, '-c', 'ssh-keygen -q -b 4096 -t rsa -f $HOME/.ssh/id_rsa -N %s' % pipes.quote(password)])
+    subprocess.call(['su', username, '-c',
+                     'ssh-keygen -q -b 4096 -t rsa -f $HOME/.ssh/id_rsa -N %s'
+                     % pipes.quote(password)])
     if err:
         fatal(err)
 
+
 if __name__ == "__main__":
     main()
-
