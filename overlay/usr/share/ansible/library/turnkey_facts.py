@@ -32,14 +32,14 @@ def main():
     if turnkey_version:
         tkl_appver_cls = sysversion.AppVer(turnkey_version, rootfs='/')
 
-        result['ansible_facts']['turnkey'] = turnkey_box
+        result['ansible_facts']['turnkey'] = True
         result['ansible_facts']['turnkey_version_output'] = turnkey_version
         result['ansible_facts']['turnkey_app'] = tkl_appver_cls.appname
         result['ansible_facts']['turnkey_ver'] = tkl_appver_cls.tklver
         result['ansible_facts']['turnkey_arch'] = tkl_appver_cls.arch
         result['ansible_facts']['turnkey_deb'] = tkl_appver_cls.codename
     else:
-        result['ansible_facts']['turnkey'] = turnkey_box
+        result['ansible_facts']['turnkey'] = False
 
     module.exit_json(**result)
 
