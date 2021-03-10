@@ -1,7 +1,10 @@
 /* Include turnkey base and other appliances below */
 #include <turnkey/base>
+#include <turnkey/mysql>
+
+nginx
+
 python3-pip
-lighttpd
 python3-setuptools
 python3-wheel
 
@@ -17,3 +20,4 @@ sudo                /* required to give ansible user root privileges */
 sshpass             /* required by ansible to script password entry */
 keychain            /* manages ssh-agent keys for ansible */
 tree                /* useful utility for displaying directory structure */
+python3-bcrypt      /* required for setting semphore user pword in db */

@@ -3,13 +3,22 @@
 ADMIN_USER=ansible
 ADMIN_PASS=turnkey
 
+DB_USER=semaphore
+DB_NAME=semaphore
+DB_PASS=$(mcookie)
+
 HTDOCS=/var/www/ansible/htdocs
+SRC=/usr/local/src
+SEM_PLAYBKS=/home/$ADMIN_USER/semaphore-playbooks
 
 # install ansible and deps (inc Windows support)
+python3 -m pip install --upgrade --force pip
 python3 -m pip install --upgrade --force setuptools
-pip3 install 'ansible==2.9.12'
-pip3 install --upgrade 'pywinrm>=0.1.1'
+pip3 install 'ansible==2.10.7'
+pip3 install --upgrade 'pywinrm>=0.4.1'
 pip3 install boto3
+# update requests to stop error message when running ansible
+pip3 install requests --upgrade
 
 # create admins group, ansible user and sudo privs
 addgroup --system admins
@@ -21,6 +30,8 @@ passwd -l $ADMIN_USER # lock account (AWS workaround; setting passwd reenables)
 # create ansible log directory
 mkdir -p /var/log/ansible
 chown $ADMIN_USER:$ADMIN_USER /var/log/ansible
+mkdir -p $SEM_PLAYBKS
+chown -R $ADMIN_USER:$ADMIN_USER $SEM_PLAYBKS
 
 # add keychain to ~/.bashrc.d
 cat > /home/$ADMIN_USER/.bashrc.d/keychain <<_EOF_
@@ -30,12 +41,64 @@ _EOF_
 chmod 0755 /home/$ADMIN_USER/.bashrc.d/keychain
 
 # web setup
-lighttpd-disable-mod ssl # ansible.con already includes ssl
 mkdir -p $HTDOCS/{css,images}
 cp /var/www/js/ui.* $HTDOCS/js/
 cp /var/www/css/*.css $HTDOCS/css/
 cp /var/www/images/{webmin.png,shell.png,tab.png} $HTDOCS/images/
 rm -rf /var/www/{js,css,images}
 
+# clone lxc_ssh.py (using fork as origin repo is no longer maintained).
+git clone --depth=1 https://github.com/andreasscherbaum/ansible-lxc-ssh.git $SRC/ansible-lxc-ssh
+rm -f /usr/share/ansible/plugins/connection/lxc_ssh.py
+ln -s $SRC/ansible-lxc-ssh/lxc_ssh.py /usr/share/ansible/plugins/connection/lxc_ssh.py
+
 # git clone ansible-examples
-su ansible -c "git clone https://github.com/ansible/ansible-examples.git /home/ansible/examples" 
+su - ansible -c "git clone --depth=1 https://github.com/ansible/ansible-examples.git /home/ansible/examples"
+
+# install & configure semaphore
+CONF=/etc/semaphore/config.json
+mkdir -p $(dirname $CONF)
+adduser --system --no-create-home --disabled-login --group --shell=/bin/false $DB_USER
+
+apt-get install -y $SRC/semaphore_*.deb
+rm -rf $SRC/semaphore_*.deb
+mv $SRC/semaphore.service /etc/systemd/system/
+
+cat > $(dirname $CONF)/env <<EOF
+export SEMAPHORE_CONFIG=$CONF
+EOF
+systemctl enable semaphore.service
+
+service mysql start
+mysqladmin create $DB_NAME
+mysql --batch --execute "\
+    grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS'; \
+    flush privileges;"
+
+semaphore --setup <<EOF
+127.0.0.1:3306
+semaphore
+$DB_PASS
+semaphore
+/tmp/ansible-playbooks
+localhost
+n
+n
+n
+yes
+/etc/semaphore
+admin
+semaphore@localhost
+admin
+$ADMIN_PASS
+EOF
+
+sed -i '\| *"web_host"| s|:.*|: "",|' $CONF
+
+# create initial project in semaphore
+mysql --batch --execute "\
+    INSERT INTO $DB_NAME.project VALUES (2,'2021-03-04 02:41:53','TurnKey Project',0,'');"
+mysql --batch --execute "\
+    INSERT INTO $DB_NAME.project__user VALUES (2,1,1);"
+
+service mysql stop

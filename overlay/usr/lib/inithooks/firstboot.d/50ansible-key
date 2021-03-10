@@ -1,6 +1,7 @@
 #!/bin/bash -e
 # add ansible ssh key to root's authorized_keys
 # allows ansible to login as root without a password
+# Also add keypair to example TurnKey Semaphore project
 
 APP_USER=ansible
 
@@ -15,4 +16,11 @@ else
     ADMIN_HOME=/root
 fi
 mkdir -p $ADMIN_HOME/.ssh
-cat /home/$APP_USER/.ssh/id_rsa.pub >> $ADMIN_HOME/.ssh/authorized_keys
+PUB_KEY=$(cat /home/$APP_USER/.ssh/id_rsa.pub)
+PRV_KEY=$(cat /home/$APP_USER/.ssh/id_rsa)
+echo $PUB_KEY >> $ADMIN_HOME/.ssh/authorized_keys
+
+mysql -e " \
+    INSERT INTO semaphore.access_key VALUES (1,'Ansible SSH key','ssh',2,'$PUB_KEY','$PRV_KEY',0);" \
+        2>/dev/null \
+        || echo "A SSH key is already registered, skipping" >&2

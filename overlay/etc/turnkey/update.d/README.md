@@ -10,5 +10,7 @@ changes have already been made and if so, will do nothing.
 
 Wikipedia
 ---------
-Idempotence: "the property of certain operations in mathematics and computer science, that can be applied multiple times without changing the result beyond the initial application."
- 
+
+Idempotence: "the property of certain operations in mathematics and computer
+science, that can be applied multiple times without changing the result beyond
+the initial application."
