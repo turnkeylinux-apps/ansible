@@ -7,7 +7,6 @@ DB_USER=semaphore
 DB_NAME=semaphore
 DB_PASS=$(mcookie)
 
-HTDOCS=/var/www/ansible/htdocs
 SRC=/usr/local/src
 SEM_PLAYBKS=/home/$ADMIN_USER/semaphore-playbooks
 
@@ -39,13 +38,6 @@ keychain ~/.ssh/id_rsa
 source ~/.keychain/\$(hostname)-sh
 _EOF_
 chmod 0755 /home/$ADMIN_USER/.bashrc.d/keychain
-
-# web setup
-mkdir -p $HTDOCS/{css,images}
-cp /var/www/js/ui.* $HTDOCS/js/
-cp /var/www/css/*.css $HTDOCS/css/
-cp /var/www/images/{webmin.png,shell.png,tab.png} $HTDOCS/images/
-rm -rf /var/www/{js,css,images}
 
 # clone lxc_ssh.py (using fork as origin repo is no longer maintained).
 git clone --depth=1 https://github.com/andreasscherbaum/ansible-lxc-ssh.git $SRC/ansible-lxc-ssh
