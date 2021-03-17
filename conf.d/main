@@ -57,7 +57,7 @@ rm -rf $SRC/semaphore_*.deb
 mv $SRC/semaphore.service /etc/systemd/system/
 
 cat > $(dirname $CONF)/env <<EOF
-export SEMAPHORE_CONFIG=$CONF
+SEMAPHORE_CONFIG=$CONF
 EOF
 systemctl enable semaphore.service
 
