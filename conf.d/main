@@ -67,16 +67,17 @@ mysql --batch --execute "\
     grant all privileges on $DB_NAME.* to $DB_USER@localhost identified by '$DB_PASS'; \
     flush privileges;"
 
-semaphore --setup <<EOF
+semaphore setup <<EOF
+1
 127.0.0.1:3306
 semaphore
 $DB_PASS
 semaphore
 /tmp/ansible-playbooks
 localhost
-n
-n
-n
+no
+no
+no
 yes
 /etc/semaphore
 admin
@@ -89,7 +90,7 @@ sed -i '\| *"web_host"| s|:.*|: "",|' $CONF
 
 # create initial project in semaphore
 mysql --batch --execute "\
-    INSERT INTO $DB_NAME.project VALUES (2,'2021-03-04 02:41:53','TurnKey Project',0,'');"
+    INSERT INTO $DB_NAME.project VALUES (2,'2021-03-04 02:41:53','TurnKey Project',0,'',0);"
 mysql --batch --execute "\
     INSERT INTO $DB_NAME.project__user VALUES (2,1,1);"
 
