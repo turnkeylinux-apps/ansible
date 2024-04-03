@@ -1,6 +1,6 @@
 turnkey-ansible-18.0 (1) turnkey; urgency=low
 
-  * Update Semaphore to v2.9.58.
+  * Update to latest upsteam Semaphore - v2.9.64.
     [Anton Pyrogovskyi <anton@turnkeylinux.org>]
 
   * Install Ansible v7.3.0 from Debian repos.
