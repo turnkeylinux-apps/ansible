@@ -1,20 +1,9 @@
-/* Include turnkey base and other appliances below */
 #include <turnkey/base>
 #include <turnkey/mysql>
 
 nginx
+ansible
 
-python3-pip
-python3-setuptools
-python3-wheel
-
-libyaml-0-2         /* packages needed for yaml parsing */
-libyaml-dev
-gcc                 /* packages needed for compiling pycrypto */
-make
-python3-dev
-libffi-dev
-libssl-dev
 python3-apt         /* allows ansible to manage apt packages */
 sudo                /* required to give ansible user root privileges */
 sshpass             /* required by ansible to script password entry */

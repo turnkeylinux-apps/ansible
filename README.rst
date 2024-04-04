@@ -10,7 +10,7 @@ downtime rolling updates.
 This appliance includes all the standard features in `TurnKey Core`_, and on
 top of that:
 
-   - Stable release of Ansible installed via pip.
+   - Stable release of Ansible installed from Debian repos.
    - WinRM support for managing Windows hosts.
    - Sudo support for the ansible user.
    - Semaphore_ open source web UI for Ansible.

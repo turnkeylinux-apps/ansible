@@ -10,18 +10,9 @@ DB_PASS=$(mcookie)
 SRC=/usr/local/src
 SEM_PLAYBKS=/home/$ADMIN_USER/semaphore-playbooks
 
-# install ansible and deps (inc Windows support)
-python3 -m pip install --upgrade --force pip
-python3 -m pip install --upgrade --force setuptools
-pip3 install 'ansible==2.10.7'
-pip3 install --upgrade 'pywinrm>=0.4.1'
-pip3 install boto3
-# update requests to stop error message when running ansible
-pip3 install requests --upgrade
-
 # create admins group, ansible user and sudo privs
 addgroup --system admins
-SKEL=/etc/skel-ansible adduser --disabled-login --gecos 'ansible user' $ADMIN_USER
+SKEL=/etc/skel-ansible adduser --disabled-login --gecos 'ansible user' --shell /bin/bash $ADMIN_USER
 echo $ADMIN_USER:$ADMIN_PASS | chpasswd
 usermod -a -G admins $ADMIN_USER
 passwd -l $ADMIN_USER # lock account (AWS workaround; setting passwd reenables)
@@ -45,7 +36,7 @@ rm -f /usr/share/ansible/plugins/connection/lxc_ssh.py
 ln -s $SRC/ansible-lxc-ssh/lxc_ssh.py /usr/share/ansible/plugins/connection/lxc_ssh.py
 
 # git clone ansible-examples
-su - ansible -c "git clone --depth=1 https://github.com/ansible/ansible-examples.git /home/ansible/examples"
+su - $ADMIN_USER -c "git clone --depth=1 https://github.com/ansible/ansible-examples.git /home/ansible/examples"
 
 # install & configure semaphore
 CONF=/etc/semaphore/config.json
@@ -78,7 +69,9 @@ localhost
 no
 no
 no
-yes
+no
+no
+no
 /etc/semaphore
 admin
 semaphore@localhost
@@ -89,9 +82,8 @@ EOF
 sed -i '\| *"web_host"| s|:.*|: "",|' $CONF
 
 # create initial project in semaphore
-mysql --batch --execute "\
-    INSERT INTO $DB_NAME.project VALUES (2,'2021-03-04 02:41:53','TurnKey Project',0,'',0);"
-mysql --batch --execute "\
-    INSERT INTO $DB_NAME.project__user VALUES (2,1,1);"
+mysql --batch --execute "INSERT INTO $DB_NAME.project VALUES (1,'2021-03-04 02:41:53','TurnKey Project',0,NULL,0,'');"
+mysql --batch --execute "INSERT INTO $DB_NAME.project__user VALUES (1,1,'owner');"
 
 service mysql stop
+killall ssh-agent
