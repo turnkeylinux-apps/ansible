@@ -40,14 +40,16 @@ su - $ADMIN_USER -c "git clone --depth=1 https://github.com/ansible/ansible-exam
 
 # install & configure semaphore
 CONF=/etc/semaphore/config.json
-mkdir -p $(dirname $CONF)
+mkdir -p "$(dirname $CONF)"
 adduser --system --no-create-home --disabled-login --group --shell=/bin/false $DB_USER
 
 apt-get install -y $SRC/semaphore_*.deb
 rm -rf $SRC/semaphore_*.deb
 mv $SRC/semaphore.service /etc/systemd/system/
 
-cat > $(dirname $CONF)/env <<EOF
+sed -iE 's|/home/semaphore/config.json|/etc/semaphore/config.json|' /etc/systemd/system/semaphore.service
+
+cat > "$(dirname $CONF)/env" <<EOF
 SEMAPHORE_CONFIG=$CONF
 EOF
 systemctl enable semaphore.service
@@ -80,10 +82,6 @@ $ADMIN_PASS
 EOF
 
 sed -i '\| *"web_host"| s|:.*|: "",|' $CONF
-
-# create initial project in semaphore
-mysql --batch --execute "INSERT INTO $DB_NAME.project VALUES (1,'2021-03-04 02:41:53','TurnKey Project',0,NULL,0,'');"
-mysql --batch --execute "INSERT INTO $DB_NAME.project__user VALUES (1,1,'owner');"
 
 service mysql stop
 killall ssh-agent
