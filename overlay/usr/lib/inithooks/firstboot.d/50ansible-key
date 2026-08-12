@@ -7,7 +7,7 @@ APP_USER=ansible
 
 . /etc/default/inithooks
 
-[ -e $INITHOOKS_CONF ] && . $INITHOOKS_CONF
+[ -e "$INITHOOKS_CONF" ] && . "$INITHOOKS_CONF"
 
 # make sure the .ssh directory exists
 if [[ $SUDOADMIN == "true" ]]; then
@@ -15,10 +15,10 @@ if [[ $SUDOADMIN == "true" ]]; then
 else
     ADMIN_HOME=/root
 fi
-mkdir -p $ADMIN_HOME/.ssh
-PUB_KEY=$(cat /home/$APP_USER/.ssh/id_rsa.pub)
-PRV_KEY=$(cat /home/$APP_USER/.ssh/id_rsa)
-echo $PUB_KEY >> $ADMIN_HOME/.ssh/authorized_keys
+mkdir -p "$ADMIN_HOME/.ssh"
+PUB_KEY="$(cat /home/$APP_USER/.ssh/id_rsa.pub)"
+PRV_KEY="$(cat /home/$APP_USER/.ssh/id_rsa)"
+echo "$PUB_KEY" >> "$ADMIN_HOME/.ssh/authorized_keys"
 
 mysql -e " \
     INSERT INTO semaphore.access_key VALUES (1,'Ansible SSH key','ssh',2,'$PUB_KEY','$PRV_KEY',0);" \

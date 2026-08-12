@@ -1,3 +1,11 @@
+turnkey-ansible-19.0 (1) turnkey; urgency=low
+
+  * Update to latest upsteam Semaphore - v2.18.13.
+
+  * Install Ansible v12.0.0 from Debian repos.
+
+ -- Stefan Davis <nafets.sivad@gmail.com>  Tue, 30 Jun 2026 03:51:51 +0000
+
 turnkey-ansible-18.0 (1) turnkey; urgency=low
 
   * Update to latest upsteam Semaphore - v2.9.64.

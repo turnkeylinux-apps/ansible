@@ -16,7 +16,7 @@ import getopt
 import subprocess
 from subprocess import PIPE
 import signal
-import pipes
+import shlex
 import bcrypt
 
 from libinithooks.dialog_wrapper import Dialog
@@ -31,7 +31,7 @@ def fatal(s):
 def usage(s=None):
     if s:
         print("Error:", s, file=sys.stderr)
-    print("Syntax: %s <username> [options]" % sys.argv[0], file=sys.stderr)
+    print(f"Syntax: {sys.argv[0]} <username> [options]", file=sys.stderr)
     print(__doc__, file=sys.stderr)
     sys.exit(1)
 
@@ -57,9 +57,9 @@ def main():
     if not password:
         d = Dialog('TurnKey Linux - First boot configuration')
         password = d.get_password(
-            "%s Password" % username.capitalize(),
-            "Please enter new password for the %s user account. This password"
-            " will also be used for the Sempahore 'admin' user." % username)
+            f"{username.capitalize()} Password",
+            f"Please enter new password for the {username} user account. This password"
+            " will also be used for the Sempahore 'admin' user.")
 
     command = ["chpasswd"]
     input = ":".join([username, password])
@@ -79,8 +79,7 @@ def main():
 
     """use ssh-keygen to create an rsa key pair using the same password"""
     subprocess.call(['su', username, '-c',
-                     'ssh-keygen -q -b 4096 -t rsa -f $HOME/.ssh/id_rsa -N %s'
-                     % pipes.quote(password)])
+                     f'ssh-keygen -q -b 4096 -t rsa -f $HOME/.ssh/id_rsa -N {shlex.quote(password)}'])
     if err:
         fatal(err)
 
